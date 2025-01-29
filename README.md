@@ -1,8 +1,8 @@
 ## Index
 
-[Getting started](#getting-started)
-[API Routes](#api-routes)
-[TBD](#tbd)
+- [Getting started](#getting-started)
+- [API Routes](#api-routes)
+- [TBD](#tbd)
 
 
 
