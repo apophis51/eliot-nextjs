@@ -6,10 +6,6 @@
 
 
 
-
-
-
-
 ## Getting Started
 These Examples can be run by cloning to your computer and running 
 
@@ -26,8 +22,8 @@ NextJS provides upgrade instruction from 12 - 14, and also 15 :
 - https://nextjs.org/docs/app/building-your-application/upgrading
 
 
-However you might need to upgrade your Node version in the process.
-Personally I started from Next12 using Node16 and switched to Node19 before upgrading to 14, and then 15 with these commands
+However, you might need to upgrade your Node version in the process.
+Personally I started from Next-12 using Node-16 and switched to Node-19 before upgrading to 14, and then 15 with these commands
 
 
 12 to 14: 
@@ -49,7 +45,7 @@ npm ERR!
 npm ERR! Found: eslint@9.19.0
 ```
 
-and to correct it, I just npm uninstalled eslint before running the update commands
+and to correct it, I `npm uninstalled eslint` before running the update commands
 
 --------------------------------------------------
 
@@ -116,31 +112,39 @@ export async function GET() {
 A POST request in Next-12 would be structured like this:
 
 ```tsx
-import type { NextApiRequest, NextApiResponse } from 'next'
- 
+import type { NextApiRequest, NextApiResponse } from 'next';
+
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    // Process a POST request
+    res.status(200).json({ message: 'Data received', data: req.body });
   } else {
-    // Handle any other HTTP method
+    res.setHeader('Allow', ['POST']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
 ```
 
-However a key difference is that In 15 you need to explicitly export the REST Method as a function
+However a key difference is that In Next - 15 you need to explicitly export the REST Method as a function
 
 ```tsx
-export async function GET(request: Request) {}
+
+export async function POST(req: Request) {
+  const body = await req.json();
+  return Response.json({ message: 'Data received', data: body });
+}
+
+// GET and other methods to the same route need to be defined seperatly in the file
+
+//export async function GET(request: Request) {}
  
-export async function HEAD(request: Request) {}
+//export async function HEAD(request: Request) {}
  
-export async function POST(request: Request) {}
  
-export async function PUT(request: Request) {}
+//export async function PUT(request: Request) {}
  
-export async function DELETE(request: Request) {}
+//export async function DELETE(request: Request) {}
  
-export async function PATCH(request: Request) {}
+//export async function PATCH(request: Request) {}
  ```
 
  More usefull Docs: 
