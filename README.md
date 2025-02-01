@@ -2,6 +2,7 @@
 
 - [Getting started](#getting-started)
 - [API Routes](#api-routes)
+- [Server-side Rendering (SSR)](#server-side-rendering-ssr)
 - [TBD](#tbd)
 
 
@@ -154,9 +155,121 @@ export async function POST(req: Request) {
 
 
 
+--------------------
+
+## Server-side Rendering(SSR)
+
+### SSR Folder Changes
+In Next.js 15, client-side code must be saved into the /app folder as page.tsx. The name given to the folder determines the navigable route in the browser URL.
+
+```bash
+|-- /app                   # Next.js 15 code needs to be in an app folder
+|   |-- /ISS15-server
+|   |   |-- page.tsx      
+|-- /pages                 
+|   |-- /ISS12.tsx
+
+```
+In this case, we have two versions of the same route:
+
+http://localhost:3000/ISS15-server is our Next.js 15 route
+http://localhost:3000/ISS12 is our Next.js 12 route
+
+### SSR Code Changes
+
+In Next.js 15, instead of using getServerSideProps, you can fetch data directly in server components. In this example, we fetch ISS location data directly in our page. This data is rendered on the server and then sent to the client each time the page is refreshed. Notice how we mark the page with 'use server'
+
+```jsx
+// file located in app/ISS15-server/page.tsx
+'use server'
+
+export default async function Page() {
+
+  const res = await fetch(`http://api.open-notify.org/iss-now.json`)
+  const data = await res.json()
+
+  return (
+    <div>
+      <h1>ISS Location</h1>
+      <p>Latitude: {data.iss_position.latitude}</p>
+      <p>Longitude: {data.iss_position.longitude}</p>
+    </div>
+  )
+}
+```
+
+This is the equivalent code in Next.js 12:
+
+```jsx
+  // file located in /pages/ISS12.tsx
+  export async function getServerSideProps() {
+    const res = await fetch(`http://api.open-notify.org/iss-now.json`)
+    const data = await res.json()
+    return { props: { data } }
+  }
+
+  export default function Page({ data }) {
+    
+    return (
+      <div>
+        <h1>ISS Location</h1>
+        <p>Latitude: {data.iss_position.latitude}</p>
+        <p>Longitude: {data.iss_position.longitude}</p>
+      </div>
+    )
+  }
+```
+
+One key difference in Next.js 15 is that client-side code, such as useEffect and useState, is not allowed in server components. Next.js 15 uses 'use client' to mark a file as a client component. You can define the client-side code separately and import it into the server component.
+
+```jsx
+// file located in app/ISS15-server-and-client/page.tsx
+'use server'
+
+import Display from './Display'
+
+export default async function Page() {
+
+    const res = await fetch(`http://api.open-notify.org/iss-now.json`)
+    const data = await res.json()
+
+    return (
+        <Display data={data} />
+    )
+}
+```
+
+```jsx
+// file located in app/ISS15-server-and-client/Display.tsx
+'use client'
+
+import {useState} from 'react'
+
+  export default function Page({data}) {
+
+    const [background, setBackground] = useState('gray');
+
+    function toggleBackgroundColor() {
+      if (background === 'gray') {
+        setBackground('red');
+      } else {
+        setBackground('gray');
+      }
+    }
+    
+    return (
+      <div  style={{ backgroundColor: background, color: 'white' }}>
+        <h1>ISS Location</h1>
+        <p>Latitude: {data.iss_position.latitude}</p>
+        <p>Longitude: {data.iss_position.longitude}</p>
+        <button onClick={() => toggleBackgroundColor()}>Toggle Color</button>
+      </div>
+    )
+  }
+```
 
 
- --------------------
+--------------------
 
  ## More Documentation In PROG!
 
