@@ -4,8 +4,8 @@
 - [API Routes](#api-routes)
 - [Server-side Rendering (SSR)](#server-side-rendering-ssr)
 - [Static Generation](#static-generation)
+- [Server Actions](#server-actions)
 
-- [TBD](#tbd)
 
 
 
@@ -327,8 +327,57 @@ export default async function CollegeData() {
   }
 ```
 
---------------------
+## Server Actions
 
- ## More Documentation In PROG!
+I'm not sure that something like this existed in Next 12, but in Next 15 in addition to api routes you can also use server actions for backend work. 
+This is viewable at http://localhost:3000/DataBaseViewer
 
- TBD
+
+
+
+Here we interact with our database using a server action:
+```tsx
+
+'use client'
+
+import { User } from '@prisma/client'
+import { getAllUsers } from './databaseAction'
+import { useState } from 'react'
+
+
+export default function DataBaseViewer() {
+    const [users, setUsers] = useState<User[]>([])     
+
+    async function buttonHandler() {
+        const users = await getAllUsers() // instead fetching this data from an api route we use a server action
+        setUsers(users)
+    }
+
+    return (
+        <>
+            <button onClick={buttonHandler}>View all Users</button>
+            {users && users.map((user) => {
+                return (
+                    <div key={user.id}>
+                        <p>{user.name}</p>
+                        <p>{user.email}</p>
+                    </div>
+                )
+            })}
+        </>
+    )
+}
+```
+
+```tsx
+'use server'          //code tagged as use server is executed on the backend
+
+import { prisma } from '../lib/prisma'
+
+
+export async function getAllUsers() {
+    const users = await prisma.user.findMany();
+    return users
+  }
+-----------------------------------------------------------------------------------------
+
