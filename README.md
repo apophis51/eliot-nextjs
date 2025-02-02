@@ -5,6 +5,7 @@
 - [Server-side Rendering (SSR)](#server-side-rendering-ssr)
 - [Static Generation](#static-generation)
 - [Server Actions](#server-actions)
+- [Layout](#layout)
 
 
 
@@ -380,5 +381,10 @@ export async function getAllUsers() {
     const users = await prisma.user.findMany();
     return users
   }
+  ```
+
+  ## Layout 
+
+  Instead of using _app.tsx or _app.js the root of your app folder must have a layout.tsx or layout.js file. This file will be used to wrap all your pages. If you do not create one, Next 15 will create one for you automatically when you create your /app page and run the server. 
 -----------------------------------------------------------------------------------------
 
