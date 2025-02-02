@@ -3,6 +3,8 @@
 - [Getting started](#getting-started)
 - [API Routes](#api-routes)
 - [Server-side Rendering (SSR)](#server-side-rendering-ssr)
+- [Static Generation](#static-generation)
+
 - [TBD](#tbd)
 
 
@@ -175,6 +177,8 @@ In this case, we have two versions of the same route:
 http://localhost:3000/ISS15-server is our Next.js 15 route
 http://localhost:3000/ISS12 is our Next.js 12 route
 
+You can Incrementaly use Next.js 15 and Next.js 12 side by side same as with the API routes
+
 ### SSR Code Changes
 
 In Next.js 15, instead of using getServerSideProps, you can fetch data directly in server components. In this example, we fetch ISS location data directly in our page. This data is rendered on the server and then sent to the client each time the page is refreshed. Notice how we mark the page with 'use server'
@@ -268,6 +272,60 @@ import {useState} from 'react'
   }
 ```
 
+## Static Generation
+
+In Next 12 you can use `getStaticProps` to fetch data at build time. Next 15 renders pages at build time by default and does not require this step
+
+```tsx
+export default function CollegeData({ colleges }) {
+    return (
+        <>
+      <h1>Colleges in the UK</h1>
+      <ul>
+        {colleges.map((college) => (
+          <li>{college.web_pages[0]}</li>
+        ))}
+      </ul>
+      </>
+    )
+  }
+
+// This function gets called at build time
+export async function getStaticProps() {
+  // Call an external API endpoint to get posts
+  const res = await fetch('http://universities.hipolabs.com/search?country=United+Kingdom')
+  const colleges = await res.json()
+  console.log(colleges)
+ 
+  return {
+    props: {
+      colleges,
+    },
+  }
+}
+```
+
+Next 15:
+
+```tsx
+'use server'
+
+export default async function CollegeData() {
+    const res = await fetch('http://universities.hipolabs.com/search?country=United+Kingdom')
+    const colleges = await res.json()
+
+    return (
+        <>
+      <h1>Colleges in the UK</h1>
+      <ul>
+        {colleges.map((college) => (
+          <li key={college.web_pages[0]}>{college.web_pages[0]}</li>
+        ))}
+      </ul>
+      </>
+    )
+  }
+```
 
 --------------------
 

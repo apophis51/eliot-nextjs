@@ -1,6 +1,7 @@
 'use server'
-
 import Display from './Display'
+
+
 
 export default async function Page() {
 
