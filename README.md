@@ -8,7 +8,6 @@
 
 
 
-
 ## Getting Started
 These Examples can be run by cloning to your computer and running 
 
@@ -174,8 +173,8 @@ In Next.js 15, client-side code must be saved into the /app folder as page.tsx. 
 ```
 In this case, we have two versions of the same route:
 
-http://localhost:3000/ISS15-server is our Next.js 15 route
-http://localhost:3000/ISS12 is our Next.js 12 route
+- http://localhost:3000/ISS15-server is our Next.js 15 route
+- http://localhost:3000/ISS12 is our Next.js 12 route
 
 You can Incrementaly use Next.js 15 and Next.js 12 side by side same as with the API routes
 
@@ -242,12 +241,14 @@ export default async function Page() {
     )
 }
 ```
+We have to export the dynamic property to force Next.js to re-render the page on every request, because Next.js 15 statically generates pages by default, which would cause build time errors, since react dom properties are only available at render.
 
 ```jsx
 // file located in app/ISS15-server-and-client/Display.tsx
 'use client'
 
 import {useState} from 'react'
+export const dynamic = 'force-dynamic'
 
   export default function Page({data}) {
 
